@@ -8,10 +8,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.json;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import ltd.qubit.commons.random.RandomBeanGenerator;
 import ltd.qubit.commons.test.Tester;
-
-import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import static ltd.qubit.commons.test.json.JacksonJsonTestUtils.testJsonDeserialization;
 import static ltd.qubit.commons.test.json.JacksonJsonTestUtils.testJsonSerialization;

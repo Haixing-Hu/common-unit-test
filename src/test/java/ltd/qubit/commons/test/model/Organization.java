@@ -8,13 +8,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.model;
 
+import javax.annotation.Nullable;
+
 import ltd.qubit.commons.annotation.Identifier;
 import ltd.qubit.commons.annotation.Reference;
 import ltd.qubit.commons.lang.Equality;
 import ltd.qubit.commons.lang.Hash;
 import ltd.qubit.commons.text.tostring.ToStringBuilder;
-
-import javax.annotation.Nullable;
 
 public class Organization {
 

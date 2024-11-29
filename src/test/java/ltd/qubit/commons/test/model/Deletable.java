@@ -8,10 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.model;
 
-import ltd.qubit.commons.annotation.Computed;
-
 import java.time.Instant;
+
 import javax.annotation.Nullable;
+
+import ltd.qubit.commons.annotation.Computed;
 
 /**
  * 此接口表示实体类记录了标记删除时间。

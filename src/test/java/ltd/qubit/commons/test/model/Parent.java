@@ -8,6 +8,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.model;
 
+import java.util.List;
+
 import ltd.qubit.commons.annotation.Identifier;
 import ltd.qubit.commons.annotation.Reference;
 import ltd.qubit.commons.lang.Argument;
@@ -16,8 +18,6 @@ import ltd.qubit.commons.lang.Assignment;
 import ltd.qubit.commons.lang.Equality;
 import ltd.qubit.commons.lang.Hash;
 import ltd.qubit.commons.text.tostring.ToStringBuilder;
-
-import java.util.List;
 
 public class Parent implements WithInfo, Assignable<Parent> {
 
