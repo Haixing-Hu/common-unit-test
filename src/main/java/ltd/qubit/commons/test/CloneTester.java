@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
- * A tester object used to test the clone and assign operations of model classes.
+ * 测试实现了`CloneEx`和`Assignable`的类是否正确实现了`clone()`和`assign()`方法。
  *
- * @author Haixing Hu
+ * @author 胡海星
  */
 public class CloneTester extends Tester {
 
@@ -38,12 +38,13 @@ public class CloneTester extends Tester {
     super(random, loops);
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   protected <T> void doTest(final Class<T> type) throws Exception {
     if (CloneableEx.class.isAssignableFrom(type)) {
       for (int i = 0; i < loops; ++i) {
         final T obj = random.nextObject(type);
-        final T clonedCopy = ((CloneableEx<T>) obj).clone();
+        final T clonedCopy = ((CloneableEx<T>) obj).cloneEx();
         assertEquals(obj, clonedCopy,
             "The cloned copy must equals to the original object.");
         assertNotSame(obj, clonedCopy,

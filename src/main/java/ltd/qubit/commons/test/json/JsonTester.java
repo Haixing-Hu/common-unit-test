@@ -8,10 +8,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.json;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-
 import ltd.qubit.commons.random.RandomBeanGenerator;
 import ltd.qubit.commons.test.Tester;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
+import static ltd.qubit.commons.test.json.JacksonJsonTestUtils.testJsonDeserialization;
+import static ltd.qubit.commons.test.json.JacksonJsonTestUtils.testJsonSerialization;
 
 /**
  * A tester object used to test the JSON serialization/deserialization of
@@ -48,8 +51,8 @@ public class JsonTester extends Tester {
   protected <T> void doTest(final Class<T> type) throws Exception {
     for (int i = 0; i < loops; ++i) {
       final T obj = random.nextObject(type);
-      JacksonJsonTestUtils.testJsonSerialization(mapper, obj);
-      JacksonJsonTestUtils.testJsonDeserialization(mapper, obj);
+      testJsonSerialization(mapper, obj);
+      testJsonDeserialization(mapper, obj);
     }
   }
 }

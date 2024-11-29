@@ -29,6 +29,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
@@ -50,11 +51,16 @@ import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xmlunit.assertj.XmlAssert;
 
 import ltd.qubit.commons.annotation.Scale;
+import ltd.qubit.commons.datastructure.map.MapUtils;
 import ltd.qubit.commons.io.IoUtils;
+import ltd.qubit.commons.lang.ClassUtils;
 import ltd.qubit.commons.reflect.ConstructorUtils;
+import ltd.qubit.commons.text.xml.DomUtils;
 import ltd.qubit.commons.text.xml.jaxb.JaxbUtils;
 import ltd.qubit.commons.util.codec.BigDecimalCodec;
 import ltd.qubit.commons.util.codec.IsoDateCodec;
@@ -65,6 +71,7 @@ import ltd.qubit.commons.util.codec.IsoLocalTimeCodec;
 import ltd.qubit.commons.util.codec.PeriodCodec;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import static ltd.qubit.commons.reflect.AccessibleUtils.withAccessibleObject;
@@ -72,7 +79,10 @@ import static ltd.qubit.commons.reflect.FieldUtils.getAllFields;
 import static ltd.qubit.commons.reflect.Option.ALL_ACCESS;
 import static ltd.qubit.commons.reflect.Option.BEAN_FIELD;
 import static ltd.qubit.commons.reflect.Option.NON_STATIC;
+import static ltd.qubit.commons.test.xml.XmlUnitUtils.assertXPathAbsent;
 import static ltd.qubit.commons.test.xml.XmlUnitUtils.assertXPathEquals;
+import static ltd.qubit.commons.test.xml.XmlUnitUtils.assertXmlEqual;
+import static ltd.qubit.commons.test.xml.XmlUnitUtils.getXpathElement;
 
 /**
  * The utility class for testing the XML serialization of a object.
@@ -260,7 +270,7 @@ public abstract class JaxbTestUtils {
       final String path, @Nullable final Object fieldValue, @Nullable final Field field)
       throws Exception {
     if (fieldValue == null) {
-      XmlUnitUtils.assertXPathAbsent(xml, path);
+      assertXPathAbsent(xml, path);
     } else if ((field != null) && field.isAnnotationPresent(XmlJavaTypeAdapter.class)) {
       assertXmlNodeEqualsObjectWithAdapter(xml, path, fieldValue,
           field.getAnnotation(XmlJavaTypeAdapter.class));
@@ -311,12 +321,16 @@ public abstract class JaxbTestUtils {
         }
         final BigDecimalCodec codec = new BigDecimalCodec(scale);
         assertXPathEquals(xml, path, codec.encode((BigDecimal) fieldValue));
-      } else if (Enum.class.isAssignableFrom(type)) {
+      } else if (ClassUtils.isEnumType(type)) {
         assertXPathEquals(xml, path, (Enum<?>) fieldValue);
-      } else if (type.isArray()) {
+      } else if (ClassUtils.isArrayType(type)) {
         assertXmlNodeEqualsArray(xml, path, fieldValue, field);
-      } else if (Collection.class.isAssignableFrom(type)) {
-        assertXmlNodeEqualsCollection(xml, path, (Collection<?>) fieldValue, field);
+      } else if (ClassUtils.isCollectionType(type)) {
+        final Collection<?> collection = (Collection<?>) fieldValue;
+        assertXmlNodeEqualsCollection(xml, path, collection, field);
+      } else if (ClassUtils.isMapType(type)) {
+        final Map<?, ?> map = (Map<?, ?>) fieldValue;
+        assertXmlNodeEqualsMap(xml, path, map, field);
       } else {
         final int options = NON_STATIC | ALL_ACCESS;
         final List<Field> subfields = getAllFields(fieldValue.getClass(), options);
@@ -332,7 +346,7 @@ public abstract class JaxbTestUtils {
       final String path, @Nullable final Object obj, final XmlJavaTypeAdapter annotation)
       throws Exception {
     if (obj == null) {
-      XmlUnitUtils.assertXPathAbsent(xml, path);
+      assertXPathAbsent(xml, path);
     } else {
       final Class<? extends XmlAdapter> adapterClass = annotation.value();
       final XmlAdapter adapter = ConstructorUtils.newInstance(adapterClass);
@@ -346,7 +360,7 @@ public abstract class JaxbTestUtils {
       @Nullable final Collection<?> collection, @Nullable final Field field)
       throws Exception {
     if (collection == null) {
-      XmlUnitUtils.assertXPathAbsent(xml, path);
+      assertXPathAbsent(xml, path);
     } else {
       String elementPath = path;
       if (field != null) {
@@ -369,6 +383,42 @@ public abstract class JaxbTestUtils {
     }
   }
 
+  private static void assertXmlNodeEqualsMap(final String xml, final String path,
+      @Nullable final Map<?, ?> map, @Nullable final Field field) throws Exception {
+    if (map == null) {
+      assertXPathAbsent(xml, path);
+    } else {
+      String elementPath = path;
+      if (field != null) {
+        if (!field.isAnnotationPresent(XmlElement.class)) {
+          fail("The XmlElement annotation must be presented at the map field.");
+        }
+        final String elementName = field.getAnnotation(XmlElement.class).name();
+        if (field.isAnnotationPresent(XmlElementWrapper.class)) {
+          elementPath = path + "/" + elementName;
+        } else {
+          elementPath = getXmlPathParent(path) + "/" + elementName;
+        }
+      }
+      final List<Element> nodes = getXpathElement(xml, elementPath);
+      assertEquals(map.size(), nodes.size(),
+          "The size of the map is not equal to the number of XML nodes: " + elementPath);
+      final int n = map.size();
+      for (int i = 0; i < n; ++i) {
+        final Element node = nodes.get(i);
+        final String childPath = elementPath + "[" + (i + 1) + "]";
+        final String keyPath = childPath + "/key";
+        final String valuePath = childPath + "/value";
+        final Node keyNode = DomUtils.getFirstChild(node, "key");
+        assertNotNull(keyNode, "The key node is not found in the map: " + keyPath);
+        final String keyString = keyNode.getTextContent();
+        final Object value = MapUtils.getByKeyString(map, keyString);
+        assertNotNull(value, "The key '" + keyString + "' is not found in the map: " + keyPath);
+        assertXmlNodeEqualsObject(xml, valuePath, value, null);
+      }
+    }
+  }
+
   private static String getXmlPathParent(final String path) {
     final int i = path.lastIndexOf('/');
     if (i >= 0) {
@@ -381,7 +431,7 @@ public abstract class JaxbTestUtils {
   private static void assertXmlNodeEqualsArray(final String xml, final String path,
       @Nullable final Object array, @Nullable final Field field) throws Exception {
     if (array == null) {
-      XmlUnitUtils.assertXPathAbsent(xml, path);
+      assertXPathAbsent(xml, path);
     } else {
       assert array.getClass().isArray();
       final Class<?> elementType = array.getClass().getComponentType();
@@ -512,7 +562,7 @@ public abstract class JaxbTestUtils {
     final T obj = JaxbUtils.unmarshal(new StringReader(xml), cls);
     final String marshaledXml = JaxbUtils.marshal(obj, cls);
     LOGGER.debug("Actual XML is:\n{}", marshaledXml);
-    XmlUnitUtils.assertXmlEqual(obj, xml, marshaledXml);
+    assertXmlEqual(obj, xml, marshaledXml);
     final T unmarshaledObj = JaxbUtils.unmarshal(new StringReader(marshaledXml), cls);
     LOGGER.debug("Expected object is: {}", obj);
     LOGGER.debug("Actual object is:   {}", unmarshaledObj);

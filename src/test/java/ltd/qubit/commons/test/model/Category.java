@@ -204,7 +204,7 @@ public class Category implements Identifiable, WithInfo, WithEntity, Auditable,
   }
 
   @Override
-  public Category clone() {
+  public Category cloneEx() {
     return new Category(this);
   }
 

@@ -165,7 +165,7 @@ public class Street implements Identifiable, WithInfo, Assignable<Street>,
   }
 
   @Override
-  public Street clone() {
+  public Street cloneEx() {
     return new Street(this);
   }
 

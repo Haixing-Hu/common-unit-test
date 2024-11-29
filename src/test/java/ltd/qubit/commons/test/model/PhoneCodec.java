@@ -13,6 +13,8 @@ import ltd.qubit.commons.util.codec.DecodingException;
 
 import static ltd.qubit.commons.lang.StringUtils.isEmpty;
 import static ltd.qubit.commons.lang.StringUtils.strip;
+import static ltd.qubit.commons.test.model.Phone.COUNTRY_CODE_PREFIX;
+import static ltd.qubit.commons.test.model.Phone.PART_SEPARATOR;
 
 public class PhoneCodec implements Codec<Phone, String> {
 
@@ -22,15 +24,15 @@ public class PhoneCodec implements Codec<Phone, String> {
     if (isEmpty(theSource)) {
       return null;
     }
-    final String[] parts = theSource.split(Phone.PART_SEPARATOR);
+    final String[] parts = theSource.split(PART_SEPARATOR);
     final Phone result = new Phone();
     switch (parts.length) {
       case 1:
         result.setNumber(theSource);
         return result;
       case 2:
-        if (parts[0].startsWith(Phone.COUNTRY_CODE_PREFIX)) {
-          result.setCountryArea(parts[0].substring(Phone.COUNTRY_CODE_PREFIX.length()));
+        if (parts[0].startsWith(COUNTRY_CODE_PREFIX)) {
+          result.setCountryArea(parts[0].substring(COUNTRY_CODE_PREFIX.length()));
           result.setNumber(parts[1]);
         } else {
           result.setCityArea(parts[0]);
@@ -38,8 +40,8 @@ public class PhoneCodec implements Codec<Phone, String> {
         }
         return result;
       case 3:
-        if (parts[0].startsWith(Phone.COUNTRY_CODE_PREFIX)) {
-          result.setCountryArea(parts[0].substring(Phone.COUNTRY_CODE_PREFIX.length()));
+        if (parts[0].startsWith(COUNTRY_CODE_PREFIX)) {
+          result.setCountryArea(parts[0].substring(COUNTRY_CODE_PREFIX.length()));
           result.setCityArea(parts[1]);
           result.setNumber(parts[2]);
           return result;
@@ -66,13 +68,13 @@ public class PhoneCodec implements Codec<Phone, String> {
     }
     final StringBuilder builder = new StringBuilder();
     if (! isEmpty(phone.getCountryArea())) {
-      builder.append(Phone.COUNTRY_CODE_PREFIX)
+      builder.append(COUNTRY_CODE_PREFIX)
              .append(phone.getCountryArea())
-             .append(Phone.PART_SEPARATOR);
+             .append(PART_SEPARATOR);
     }
     if (! isEmpty(phone.getCityArea())) {
       builder.append(phone.getCityArea())
-             .append(Phone.PART_SEPARATOR);
+             .append(PART_SEPARATOR);
     }
     builder.append(phone.getNumber());
     return builder.toString();

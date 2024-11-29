@@ -150,7 +150,7 @@ public class Country implements Identifiable, WithInfo, Auditable,
   }
 
   @Override
-  public Country clone() {
+  public Country cloneEx() {
     return new Country(this);
   }
 

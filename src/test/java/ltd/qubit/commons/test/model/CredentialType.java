@@ -8,13 +8,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.model;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import ltd.qubit.commons.lang.EnumUtils;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-import ltd.qubit.commons.lang.EnumUtils;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import static ltd.qubit.commons.lang.EnumUtils.registerLocalizedNames;
 

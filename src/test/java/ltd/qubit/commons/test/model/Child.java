@@ -89,7 +89,7 @@ public class Child implements WithInfo, Assignable<Child> {
   }
 
   @Override
-  public Child clone() {
+  public Child cloneEx() {
     return new Child(this);
   }
 

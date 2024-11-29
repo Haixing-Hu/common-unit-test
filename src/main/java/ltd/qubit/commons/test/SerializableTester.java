@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A tester object used to test the serializable interfaces of model classes.
+ * 测试实现了`java.io.Serializable`接口的类是否定义了`serialVersionUID`。
  *
- * @author Haixing Hu
+ * @author 胡海星
  */
 public class SerializableTester extends Tester {
 

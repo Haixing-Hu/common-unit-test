@@ -165,7 +165,7 @@ public class District implements Identifiable, WithInfo, Auditable,
   }
 
   @Override
-  public District clone() {
+  public District cloneEx() {
     return new District(this);
   }
 

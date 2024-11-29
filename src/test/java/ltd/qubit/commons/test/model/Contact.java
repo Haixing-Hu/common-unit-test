@@ -146,7 +146,7 @@ public class Contact implements Serializable, Assignable<Contact> {
   }
 
   @Override
-  public Contact clone() {
+  public Contact cloneEx() {
     return new Contact(this);
   }
 

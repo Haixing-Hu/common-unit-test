@@ -50,6 +50,7 @@ public abstract class ModelTestBase<T> {
   protected final JacksonXmlTester xmlTester;
   protected final CloneTester cloneTester;
   protected final SerializableTester serializableTester;
+  protected final NullableAnnocationTester nullableAnnocationTester;
   protected final SizeAnnotationTester sizeAnnotationTester;
   protected final ReferenceAnnotationTester referenceAnnotationTester;
 
@@ -73,6 +74,7 @@ public abstract class ModelTestBase<T> {
     this.xmlTester = new JacksonXmlTester(random, loops, xmlMapper);
     this.cloneTester = new CloneTester(random, loops);
     this.serializableTester = new SerializableTester(random, loops);
+    this.nullableAnnocationTester = new NullableAnnocationTester(random, loops);
     this.sizeAnnotationTester = new SizeAnnotationTester(random, loops);
     this.referenceAnnotationTester = new ReferenceAnnotationTester(random, loops);
   }
@@ -111,6 +113,11 @@ public abstract class ModelTestBase<T> {
   @Test
   public void testSerializable() throws Exception {
     serializableTester.test(type);
+  }
+
+  @Test
+  public void testNullableAnnotation() throws Exception {
+    nullableAnnocationTester.test(type);
   }
 
   @Test

@@ -57,7 +57,7 @@ public class Grandpa implements WithInfo, Assignable<Grandpa> {
   }
 
   @Override
-  public Grandpa clone() {
+  public Grandpa cloneEx() {
     return new Grandpa(this);
   }
 

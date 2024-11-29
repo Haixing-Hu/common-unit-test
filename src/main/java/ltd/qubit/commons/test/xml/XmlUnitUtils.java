@@ -8,13 +8,31 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.xml;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xmlunit.assertj.XmlAssert;
 import org.xmlunit.matchers.EvaluateXPathMatcher;
 import org.xmlunit.matchers.HasXPathMatcher;
-
-import javax.annotation.Nullable;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,5 +105,22 @@ public class XmlUnitUtils {
     //                              .checkForIdentical()
     //                              .build();
     // assertFalse("XML identical " + diff.toString(), diff.hasDifferences());
+  }
+
+  public static List<Element> getXpathElement(final String xml, final String xpath)
+      throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
+    final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    final DocumentBuilder builder = factory.newDocumentBuilder();
+    final Document doc = builder.parse(new InputSource(new StringReader(xml)));
+    final XPath xPath = XPathFactory.newInstance().newXPath();
+    final NodeList nodes = (NodeList) xPath.compile(xpath).evaluate(doc, XPathConstants.NODESET);
+    final List<Element> result = new ArrayList<>();
+    for (int i = 0; i < nodes.getLength(); ++i) {
+      final Node node = nodes.item(i);
+      if (node.getNodeType() == Node.ELEMENT_NODE) {
+        result.add((Element) node);
+      }
+    }
+    return result;
   }
 }

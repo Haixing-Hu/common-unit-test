@@ -8,11 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.xml;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
 import ltd.qubit.commons.random.RandomBeanGenerator;
 import ltd.qubit.commons.test.Tester;
 import ltd.qubit.commons.text.jackson.CustomizedXmlMapper;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import static ltd.qubit.commons.test.xml.JacksonXmlTestUtils.testXmlDeserialization;
 import static ltd.qubit.commons.test.xml.JacksonXmlTestUtils.testXmlSerialization;

@@ -78,7 +78,7 @@ public class Code implements Assignable<Code> {
   }
 
   @Override
-  public Code clone() {
+  public Code cloneEx() {
     return new Code(this);
   }
 

@@ -126,7 +126,8 @@ public class Address implements Serializable, Normalizable,
     location = Assignment.clone(other.location);
   }
 
-  public Address clone() {
+  @Override
+  public Address cloneEx() {
     return new Address(this);
   }
 

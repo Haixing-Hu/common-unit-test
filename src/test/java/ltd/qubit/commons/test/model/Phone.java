@@ -128,7 +128,7 @@ public class Phone implements Serializable, Assignable<Phone> {
   }
 
   @Override
-  public Phone clone() {
+  public Phone cloneEx() {
     return new Phone(this);
   }
 

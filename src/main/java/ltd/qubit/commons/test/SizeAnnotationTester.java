@@ -18,6 +18,11 @@ import ltd.qubit.commons.util.range.CloseRange;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+/**
+ * 检查对象字段的`@Size`注解参数是否正确。
+ *
+ * @author 胡海星
+ */
 public class SizeAnnotationTester extends Tester {
 
   public SizeAnnotationTester() {
@@ -61,8 +66,7 @@ public class SizeAnnotationTester extends Tester {
       } else if (!prop.isNullable() && sizeRange != null) {
         // assertNotNull(sizeRange, "Non-nullable string field " + prop.getFullname()
         //    + " must be annotated by a @Size annotation.");
-        assertNotEquals(0,
-            sizeRange.getMin(),
+        assertNotEquals(0, sizeRange.getMin(),
             "@Size annotated non-nullable string field " + prop.getFullname()
                 + " must have a min value of at least 1.");
       } else if (sizeRange != null) {

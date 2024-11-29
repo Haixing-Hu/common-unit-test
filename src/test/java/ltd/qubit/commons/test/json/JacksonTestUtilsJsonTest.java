@@ -28,6 +28,7 @@ import ltd.qubit.commons.test.model.ObjectWithArrayField;
 import ltd.qubit.commons.test.model.ObjectWithBigDecimalField;
 import ltd.qubit.commons.test.model.ObjectWithEnumField;
 import ltd.qubit.commons.test.model.ObjectWithListField;
+import ltd.qubit.commons.test.model.ObjectWithMapField;
 import ltd.qubit.commons.test.model.State;
 import ltd.qubit.commons.test.model.StringSet;
 import ltd.qubit.commons.text.jackson.CustomizedJsonMapper;
@@ -161,6 +162,18 @@ public class JacksonTestUtilsJsonTest {
     final ObjectWithBigDecimalField obj = new ObjectWithBigDecimalField();
     obj.setPrice(new BigDecimal("0.5700"));
     testJsonSerialization(mapper, obj);
+    testJsonDeserialization(mapper, obj);
+  }
+
+  @Test
+  public void testTestJsonSerializationObjectWithMap() throws Exception {
+    final ObjectWithMapField obj = generator.nextObject(ObjectWithMapField.class);
+    testJsonSerialization(mapper, obj);
+  }
+
+  @Test
+  public void testTestJsonDeserializationObjectWithMap() throws Exception {
+    final ObjectWithMapField obj = generator.nextObject(ObjectWithMapField.class);
     testJsonDeserialization(mapper, obj);
   }
 

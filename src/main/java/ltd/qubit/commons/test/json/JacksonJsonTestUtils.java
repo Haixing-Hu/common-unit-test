@@ -14,6 +14,7 @@ import java.lang.reflect.Modifier;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -26,10 +27,12 @@ import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
+import ltd.qubit.commons.lang.ClassUtils;
 import ltd.qubit.commons.text.jackson.TypeRegistrationModule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static ltd.qubit.commons.lang.StringUtils.endsWithChar;
 import static ltd.qubit.commons.lang.StringUtils.nullToEmpty;
 import static ltd.qubit.commons.reflect.AccessibleUtils.withAccessibleObject;
 import static ltd.qubit.commons.reflect.FieldUtils.getAllFields;
@@ -46,24 +49,24 @@ public class JacksonJsonTestUtils {
 
   public static <T> void testJsonDeserialization(final JsonMapper mapper, final T obj)
       throws Exception {
-    LOGGER.debug("Testing JSON deserialization for the object:\n{}", obj);
+    LOGGER.info("Testing JSON deserialization for the object:\n{}", obj);
     final String json = mapper.writerWithDefaultPrettyPrinter()
         .writeValueAsString(obj);
     LOGGER.info("The object is serialized to:\n{}", json);
     final Object result = mapper.readValue(json, obj.getClass());
-    LOGGER.debug("The JSON is deserialized to:\n{}", result);
+    LOGGER.info("The JSON is deserialized to:\n{}", result);
     assertEquals(obj, result);
-    LOGGER.debug("Test finished successfully.");
+    LOGGER.info("Test finished successfully.");
   }
 
   public static <T> void testJsonSerialization(final JsonMapper mapper, final T obj)
       throws Exception {
-    LOGGER.debug("Testing JSON serialization for the object:\n{}", obj);
+    LOGGER.info("Testing JSON serialization for the object:\n{}", obj);
     final String json = mapper.writerWithDefaultPrettyPrinter()
                               .writeValueAsString(obj);
     LOGGER.info("The object is serialized to:\n{}", json);
     assertJsonNodeEqualsObject(mapper, json, null, null, obj);
-    LOGGER.debug("Test finished successfully.");
+    LOGGER.info("Test finished successfully.");
   }
 
   private static void assertJsonNodeEqualsObject(final JsonMapper mapper,
@@ -111,13 +114,16 @@ public class JacksonJsonTestUtils {
       assertJsonNodeEquals(json, path, (Double) fieldValue);
     } else if (type == String.class) {
       assertJsonNodeEquals(json, path, (String) fieldValue);
-    } else if (Enum.class.isAssignableFrom(type)) {
+    } else if (ClassUtils.isEnumType(type)) {
       assertJsonNodeEquals(json, path, (Enum<?>) fieldValue);
-    } else if (type.isArray()) {
-      assertJsonNodeEqualsArray(mapper, json, path, fieldValue);
-    } else if (Collection.class.isAssignableFrom(type)) {
+    } else if (ClassUtils.isArrayType(type)) {
+      assertJsonNodeEqualsArray(mapper, json, path, field, fieldValue);
+    } else if (ClassUtils.isCollectionType(type)) {
       final Collection<?> collection = (Collection<?>) fieldValue;
-      assertJsonNodeEqualsCollection(mapper, json, path, collection);
+      assertJsonNodeEqualsCollection(mapper, json, path, field, collection);
+    } else if (ClassUtils.isMapType(type)) {
+      final Map<?, ?> map = (Map<?, ?>) fieldValue;
+      assertJsonNodeEqualsMap(mapper, json, path, field, map);
     } else {
       final List<Field> subfields = getAllFields(fieldValue.getClass(), BEAN_FIELD);
       for (final Field subfield : subfields) {
@@ -162,18 +168,35 @@ public class JacksonJsonTestUtils {
   }
 
   private static void assertJsonNodeEqualsCollection(final JsonMapper mapper,
-      final String json, final String path, final Collection<?> collection)
-      throws Exception {
+      final String json, final String path, final Field field,
+      final Collection<?> collection) throws Exception {
     int i = 0;
     for (final Object element : collection) {
-      final String subpath = nullToEmpty(path) + "[" + i + "]";
-      assertJsonNodeEqualsObject(mapper, json, subpath, null, element);
+      // json路径不能有连续的数组方框，例如 rows[0][0].key 是无法识别的，应该写成 rows[0].[0].key
+      final String previousPath = nullToEmpty(path);
+      final String indexPath = "[" + i + "]";
+      final String subpath;
+      if (endsWithChar(previousPath, ']')) {
+        subpath = previousPath + '.' + indexPath;
+      } else {
+        subpath = previousPath + indexPath;
+      }
+      assertJsonNodeEqualsObject(mapper, json, subpath, field, element);
       ++i;
     }
   }
 
+  private static void assertJsonNodeEqualsMap(final JsonMapper mapper,
+      final String json, final String path, final Field field, final Map<?, ?> map)
+      throws Exception {
+    for (final Object key : map.keySet()) {
+      final String subPath = nullToEmpty(path) + "." + key;
+      assertJsonNodeEqualsObject(mapper, json, subPath, field, map.get(key));
+    }
+  }
+
   private static void assertJsonNodeEqualsArray(final JsonMapper mapper,
-      final String json, final String path, final Object array)
+      final String json, final String path, final Field field, final Object array)
       throws Exception {
     assert (array != null && array.getClass().isArray());
     final int n = Array.getLength(array);
@@ -220,7 +243,7 @@ public class JacksonJsonTestUtils {
     } else {
       for (int i = 0; i < n; ++i) {
         final String subpath = nullToEmpty(path) + "[" + i + "]";
-        assertJsonNodeEqualsObject(mapper, json, subpath, null, Array.get(array, i));
+        assertJsonNodeEqualsObject(mapper, json, subpath, field, Array.get(array, i));
       }
     }
   }

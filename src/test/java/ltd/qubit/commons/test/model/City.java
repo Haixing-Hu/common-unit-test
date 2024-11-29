@@ -167,7 +167,7 @@ public class City implements Identifiable, WithInfo, Assignable<City>,
   }
 
   @Override
-  public City clone() {
+  public City cloneEx() {
     return new City(this);
   }
 

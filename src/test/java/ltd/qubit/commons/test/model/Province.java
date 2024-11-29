@@ -158,7 +158,7 @@ public class Province implements Identifiable, WithInfo, Auditable,
   }
 
   @Override
-  public Province clone() {
+  public Province cloneEx() {
     return new Province(this);
   }
 

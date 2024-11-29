@@ -8,14 +8,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 package ltd.qubit.commons.test.model;
 
-import java.io.IOException;
+import ltd.qubit.commons.util.codec.Codec;
+import ltd.qubit.commons.util.codec.DecodingException;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import ltd.qubit.commons.util.codec.Codec;
-import ltd.qubit.commons.util.codec.DecodingException;
+import java.io.IOException;
 
 import static ltd.qubit.commons.lang.Argument.requireNonNull;
 

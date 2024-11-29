@@ -215,7 +215,7 @@ public class App implements Identifiable, WithInfo, Stateful, Auditable,
   }
 
   @Override
-  public App clone() {
+  public App cloneEx() {
     return new App(this);
   }
 

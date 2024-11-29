@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ltd.qubit.commons.lang.StringUtils.isEmpty;
 
 /**
- * 检查属性的 {@code @Reference} 标注是否合法。
+ * 检查对象字段的{@code @Reference}注解参数是否合法。
  *
  * @author 胡海星
  */

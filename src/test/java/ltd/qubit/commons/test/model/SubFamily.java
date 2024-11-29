@@ -49,7 +49,7 @@ public class SubFamily implements WithInfo, Assignable<SubFamily> {
   }
 
   @Override
-  public SubFamily clone() {
+  public SubFamily cloneEx() {
     return new SubFamily(this);
   }
 

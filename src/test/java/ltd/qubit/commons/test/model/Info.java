@@ -239,7 +239,7 @@ public class Info implements Identifiable, WithCode, WithName, Deletable,
   }
 
   @Override
-  public Info clone() {
+  public Info cloneEx() {
     return new Info(this);
   }
 
