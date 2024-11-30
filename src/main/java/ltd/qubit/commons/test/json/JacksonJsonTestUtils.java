@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import ltd.qubit.commons.lang.ClassUtils;
-import ltd.qubit.commons.text.jackson.TypeRegistrationModule;
+import ltd.qubit.commons.text.jackson.module.TypeRegistrationModule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
