@@ -17,31 +17,27 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import ltd.qubit.commons.random.RandomBeanGenerator;
-import ltd.qubit.commons.test.model.CloneTester;
 import ltd.qubit.commons.test.model.JacksonJsonTester;
 import ltd.qubit.commons.test.model.JacksonXmlTester;
-import ltd.qubit.commons.test.model.NullableAnnotationTester;
-import ltd.qubit.commons.test.model.ReferenceAnnotationTester;
-import ltd.qubit.commons.test.model.SerializableTester;
-import ltd.qubit.commons.test.model.SizeAnnotationTester;
+import ltd.qubit.commons.test.model.LocalizedNameTester;
 import ltd.qubit.commons.text.jackson.CustomizedJsonMapper;
 import ltd.qubit.commons.text.jackson.CustomizedXmlMapper;
 
 /**
- * 所有领域对象模型单元测试的基类。
+ * 所有领域枚举类的单元测试的基类。
  *
  * <p>这个类设置为abstract，从而使得JUnit不会对这个类本身进行测试。</p>
  *
- * @param <T>
- *     待测试的领域对象模型的类型。
+ * @param <E>
+ *     待测试的领域枚举类的类型。
  */
-public abstract class ModelTestBase<T> {
+public class EnumTestBase<E extends Enum<E>> {
 
   protected static final int DEFAULT_TEST_LOOPS = 10;
 
   protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  protected final Class<T> type;
+  protected final Class<E> type;
 
   protected final int loops;
 
@@ -51,30 +47,22 @@ public abstract class ModelTestBase<T> {
 
   protected final RandomBeanGenerator random;
 
-  protected final JacksonJsonTester<T> jacksonJsonTester;
+  protected final JacksonJsonTester<E> jacksonJsonTester;
 
-  protected final JacksonXmlTester<T> xmlTester;
+  protected final JacksonXmlTester<E> xmlTester;
 
-  protected final CloneTester<T> cloneTester;
+  protected final LocalizedNameTester<E> localizedNameTester;
 
-  protected final SerializableTester<T> serializableTester;
-
-  protected final NullableAnnotationTester<T> nullableAnnotationTester;
-
-  protected final SizeAnnotationTester<T> sizeAnnotationTester;
-
-  protected final ReferenceAnnotationTester<T> referenceAnnotationTester;
-
-  protected ModelTestBase(final Class<T> type) {
+  protected EnumTestBase(final Class<E> type) {
     this(type, DEFAULT_TEST_LOOPS, new CustomizedJsonMapper(), new CustomizedXmlMapper());
   }
 
-  protected ModelTestBase(final Class<T> type, final JsonMapper jsonMapper,
+  protected EnumTestBase(final Class<E> type, final JsonMapper jsonMapper,
       final XmlMapper xmlMapper) {
     this(type, DEFAULT_TEST_LOOPS, jsonMapper, xmlMapper);
   }
 
-  protected ModelTestBase(final Class<T> type, final int loops,
+  protected EnumTestBase(final Class<E> type, final int loops,
       final JsonMapper jsonMapper, final XmlMapper xmlMapper) {
     this.type = type;
     this.loops = loops;
@@ -83,14 +71,10 @@ public abstract class ModelTestBase<T> {
     this.random = new RandomBeanGenerator();
     this.jacksonJsonTester = new JacksonJsonTester<>(type, random, loops, jsonMapper);
     this.xmlTester = new JacksonXmlTester<>(type, random, loops, xmlMapper);
-    this.cloneTester = new CloneTester<>(type, random, loops);
-    this.serializableTester = new SerializableTester<>(type, random, loops);
-    this.nullableAnnotationTester = new NullableAnnotationTester<>(type, random, loops);
-    this.sizeAnnotationTester = new SizeAnnotationTester<>(type, random, loops);
-    this.referenceAnnotationTester = new ReferenceAnnotationTester<>(type, random, loops);
+    this.localizedNameTester = new LocalizedNameTester<>(type, random, loops);
   }
 
-  public final Class<T> getType() {
+  public final Class<E> getType() {
     return type;
   }
 
@@ -117,27 +101,7 @@ public abstract class ModelTestBase<T> {
   }
 
   @Test
-  public void testClone() throws Exception {
-    cloneTester.test();
-  }
-
-  @Test
-  public void testSerializable() throws Exception {
-    serializableTester.test();
-  }
-
-  @Test
-  public void testNullableAnnotation() throws Exception {
-    nullableAnnotationTester.test();
-  }
-
-  @Test
-  public void testSizeAnnotation() throws Exception {
-    sizeAnnotationTester.test();
-  }
-
-  @Test
-  public void testReferenceAnnotation() throws Exception {
-    referenceAnnotationTester.test();
+  public void testLocalizedName() throws Exception {
+    localizedNameTester.test();
   }
 }

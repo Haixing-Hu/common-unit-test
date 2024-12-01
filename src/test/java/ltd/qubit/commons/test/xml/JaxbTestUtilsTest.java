@@ -12,17 +12,17 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import ltd.qubit.commons.random.RandomBeanGenerator;
-import ltd.qubit.commons.test.model.App;
-import ltd.qubit.commons.test.model.BadBean;
-import ltd.qubit.commons.test.model.BeanWithPhone;
-import ltd.qubit.commons.test.model.Category;
-import ltd.qubit.commons.test.model.Info;
-import ltd.qubit.commons.test.model.Location;
-import ltd.qubit.commons.test.model.ObjectWithArrayField;
-import ltd.qubit.commons.test.model.ObjectWithEnumField;
-import ltd.qubit.commons.test.model.ObjectWithListField;
-import ltd.qubit.commons.test.model.ObjectWithMapField;
-import ltd.qubit.commons.test.model.ObjectWithSet;
+import ltd.qubit.commons.test.testbed.App;
+import ltd.qubit.commons.test.testbed.BadBean;
+import ltd.qubit.commons.test.testbed.BeanWithPhone;
+import ltd.qubit.commons.test.testbed.Category;
+import ltd.qubit.commons.test.testbed.Info;
+import ltd.qubit.commons.test.testbed.Location;
+import ltd.qubit.commons.test.testbed.ObjectWithArrayField;
+import ltd.qubit.commons.test.testbed.ObjectWithEnumField;
+import ltd.qubit.commons.test.testbed.ObjectWithListField;
+import ltd.qubit.commons.test.testbed.ObjectWithMapField;
+import ltd.qubit.commons.test.testbed.ObjectWithSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
