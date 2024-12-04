@@ -13,6 +13,7 @@ import java.util.List;
 import ltd.qubit.commons.lang.ArrayUtils;
 import ltd.qubit.commons.random.RandomBeanGenerator;
 import ltd.qubit.commons.reflect.BeanInfo;
+import ltd.qubit.commons.reflect.ObjectGraphUtils;
 import ltd.qubit.commons.reflect.Property;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,17 +65,16 @@ public class ReferenceAnnotationTester<T> extends ModelTester<T> {
       if (refClass.equals(Object.class)) {
         continue;   // 忽略 "间接引用"
       }
-      final String refPropName = prop.getReferenceProperty();
+      final String refPropPath = prop.getReferenceProperty();
       final Class<?> expectedReferencedType;
-      if (isEmpty(refPropName)) {
+      if (isEmpty(refPropPath)) {
         // 所引用的是实体类本身
         expectedReferencedType = refClass;
       } else {
-        final BeanInfo refClassInfo = BeanInfo.of(refClass);
-        final Property refProp = refClassInfo.getProperty(refPropName);
-        assertNotNull(refProp, "The property " + refClass.getSimpleName()
-            + "." + refPropName + " does not exist.");
-        expectedReferencedType = refProp.getType();
+        // 获取引用的属性的类型，注意引用的属性值可能是个属性路径
+        expectedReferencedType = ObjectGraphUtils.getPropertyType(refClass, refPropPath);
+        assertNotNull(expectedReferencedType, "The property " + refClass.getSimpleName()
+            + "." + refPropPath + " does not exist.");
       }
       if (prop.getActualComponentType() != null) {
         assertEquals(expectedReferencedType, prop.getActualComponentType(),
