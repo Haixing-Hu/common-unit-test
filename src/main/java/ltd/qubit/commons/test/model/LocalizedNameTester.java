@@ -45,10 +45,10 @@ public class LocalizedNameTester<E extends Enum<E>> extends ModelTester<E> {
 
   private void testLocalizedName(final E e, final Locale locale, final boolean fallback) {
     final String name = e.name();
-    final String localizedName = ((LocalizedEnum) e).getLocalizedName(locale);
+    final String localizedName = ((LocalizedEnum) e).getLocalizedNameFor(locale);
     final E e2 = EnumUtils.forLocalizedName(type, locale, localizedName);
     assertNotNull(e2);
-    final String localizedName2 = ((LocalizedEnum) e2).getLocalizedName(locale);
+    final String localizedName2 = ((LocalizedEnum) e2).getLocalizedNameFor(locale);
     final String message = String.format("The localized name of the value '%s' in the local %s is: '%s'",
         name, locale, localizedName);
     System.out.println(message);

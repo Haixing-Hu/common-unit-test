@@ -138,7 +138,7 @@ public enum CredentialType implements LocalizedEnum {
   public static Map<String, CredentialType> getNameMap(final Locale locale) {
     final Map<String, CredentialType> result = new HashMap<>();
     for (final CredentialType e : values()) {
-      result.put(e.getLocalizedName(locale), e);
+      result.put(e.getLocalizedNameFor(locale), e);
     }
     return result;
   }
