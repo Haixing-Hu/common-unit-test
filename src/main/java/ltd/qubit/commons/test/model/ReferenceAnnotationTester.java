@@ -31,22 +31,67 @@ import static ltd.qubit.commons.lang.StringUtils.isEmpty;
  */
 public class ReferenceAnnotationTester<T> extends ModelTester<T> {
 
+  /**
+   * 构造一个 {@link ReferenceAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   */
   public ReferenceAnnotationTester(final Class<T> type) {
     super(type);
   }
 
+  /**
+   * 构造一个 {@link ReferenceAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param loops
+   *     测试循环次数。
+   */
   public ReferenceAnnotationTester(final Class<T> type, final int loops) {
     super(type, loops);
   }
 
+  /**
+   * 构造一个 {@link ReferenceAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param random
+   *     用于生成随机数据的 {@link RandomBeanGenerator} 对象。
+   */
   public ReferenceAnnotationTester(final Class<T> type, final RandomBeanGenerator random) {
     super(type, random);
   }
 
+  /**
+   * 构造一个 {@link ReferenceAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param random
+   *     用于生成随机数据的 {@link RandomBeanGenerator} 对象。
+   * @param loops
+   *     测试循环次数。
+   */
   public ReferenceAnnotationTester(final Class<T> type, final RandomBeanGenerator random, final int loops) {
     super(type, random, loops);
   }
 
+  /**
+   * 执行对模型中 {@code @Reference} 注解的测试逻辑。
+   * <p>
+   * 此方法会遍历待测试类型的所有属性：
+   * <ul>
+   *   <li>忽略枚举类型、计算属性及非引用属性。</li>
+   *   <li>对于标记了 {@code @Reference} 注解的属性，检查其 {@code entity} 和 {@code property} 参数的合法性。</li>
+   *   <li>验证引用属性的实际类型（或其集合/映射的泛型参数类型）是否与 {@code @Reference} 注解中指定的实体及属性路径所解析出的类型一致。</li>
+   * </ul>
+   *
+   * @throws Exception
+   *     如果在测试过程中发生任何错误，例如属性不存在或类型不匹配。
+   */
   @Override
   protected void doTest() throws Exception {
     if (Enum.class.isAssignableFrom(type)) {

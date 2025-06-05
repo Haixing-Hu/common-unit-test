@@ -57,14 +57,30 @@ import static ltd.qubit.commons.text.jackson.JacksonUtils.serializeWithAdapter;
 import static ltd.qubit.commons.text.jackson.JacksonUtils.serializeWithSerializer;
 
 /**
- * The utility class for testing the XML serialization of a object.
+ * 用于测试对象XML序列化的工具类。
  *
- * @author Haixing Hu
+ * @author 胡海星
  */
 public abstract class JacksonXmlTestUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JacksonXmlTestUtils.class);
 
+  /**
+   * 断言使用Jackson将对象序列化为XML后的结果与期望的XML字符串相等。
+   *
+   * @param <T>
+   *     对象的类型。
+   * @param mapper
+   *     用于XML序列化的 {@link XmlMapper} 实例。
+   * @param cls
+   *     对象的类（此参数在当前实现中未使用，但可能为未来扩展保留）。
+   * @param object
+   *     待序列化的对象。
+   * @param expectedXml
+   *     期望的XML字符串。
+   * @throws Exception
+   *     如果在序列化或断言过程中发生错误。
+   */
   public static <T> void assertXmlSerializeEquals(final XmlMapper mapper,
       final Class<T> cls, final T object, final String expectedXml)
       throws Exception {
@@ -72,6 +88,22 @@ public abstract class JacksonXmlTestUtils {
     assertXmlEqual(object, expectedXml, actualXml);
   }
 
+  /**
+   * 断言使用Jackson将XML字符串反序列化后的对象与期望的对象相等。
+   *
+   * @param <T>
+   *     对象的类型。
+   * @param mapper
+   *     用于XML反序列化的 {@link XmlMapper} 实例。
+   * @param cls
+   *     期望对象的类。
+   * @param xml
+   *     待反序列化的XML字符串。
+   * @param expectedObject
+   *     期望的对象实例。
+   * @throws Exception
+   *     如果在反序列化或断言过程中发生错误。
+   */
   public static <T> void assertXmlDeserializeEquals(final XmlMapper mapper,
       final Class<T> cls, final String xml, final T expectedObject)
       throws Exception {
@@ -82,6 +114,22 @@ public abstract class JacksonXmlTestUtils {
     assertEquals(expectedObject, actualObject);
   }
 
+  /**
+   * 测试给定对象的Jackson XML反序列化过程。
+   * <p>
+   * 该方法首先使用提供的 {@link XmlMapper} 将对象序列化为XML字符串（带美化格式），
+   * 然后将该XML字符串反序列化回原始对象的类型，并断言原始对象与反序列化后的对象相等。
+   * 测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param mapper
+   *     用于XML序列化和反序列化的 {@link XmlMapper} 实例。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或反序列化过程中发生任何错误。
+   */
   @SuppressWarnings("unchecked")
   public static <T> void testXmlDeserialization(final XmlMapper mapper, final T obj)
       throws Exception {
@@ -95,6 +143,23 @@ public abstract class JacksonXmlTestUtils {
     LOGGER.info("Test finished successfully.");
   }
 
+  /**
+   * 测试给定对象的Jackson XML序列化过程的正确性。
+   * <p>
+   * 该方法首先使用提供的 {@link XmlMapper} 将对象序列化为XML字符串。
+   * 然后，它会调用 {@code assertXmlNodeEqualsObject} 方法来递归地比较XML字符串中的每个节点
+   * 是否与原始对象中相应字段的值匹配，以根节点名称开始。
+   * 测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param mapper
+   *     用于XML序列化的 {@link XmlMapper} 实例。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或断言过程中发生任何错误。
+   */
   public static <T> void testXmlSerialization(final XmlMapper mapper, final T obj)
       throws Exception {
     LOGGER.info("Testing XML serialization for the object:\n{}", obj);
@@ -107,12 +172,59 @@ public abstract class JacksonXmlTestUtils {
     LOGGER.info("Test finished successfully.");
   }
 
+  /**
+   * 从给定的URL加载XML，反序列化为指定类型的对象，然后再次序列化，并验证结果。
+   * <p>
+   * 此方法执行以下操作：
+   * <ol>
+   *   <li>从URL读取XML内容。</li>
+   *   <li>将XML反序列化为 {@code cls} 类型的对象 ({@code obj})。</li>
+   *   <li>将 {@code obj} 序列化回XML字符串 ({@code marshaledXml})。</li>
+   *   <li>断言原始从URL加载的XML与 {@code marshaledXml} 在语义上相等。</li>
+   *   <li>将 {@code marshaledXml} 反序列化回 {@code cls} 类型的对象 ({@code unmarshaledObj})。</li>
+   *   <li>断言 {@code obj} 与 {@code unmarshaledObj} 相等。</li>
+   * </ol>
+   *
+   * @param <T>
+   *     目标对象的类型。
+   * @param mapper
+   *     用于XML序列化和反序列化的 {@link XmlMapper} 实例。
+   * @param url
+   *     包含XML数据的URL。
+   * @param cls
+   *     期望反序列化成的对象的类。
+   * @throws Exception
+   *     如果在IO操作、序列化、反序列化或断言过程中发生错误。
+   */
   public static <T> void testXmlSerialization(final XmlMapper mapper,
       final URL url, final Class<T> cls) throws Exception {
     final String xml = IoUtils.toString(url, StandardCharsets.UTF_8);
     testXmlSerialization(mapper, xml, cls);
   }
 
+  /**
+   * 将给定的XML字符串反序列化为指定类型的对象，然后再次序列化，并验证结果。
+   * <p>
+   * 此方法执行以下操作：
+   * <ol>
+   *   <li>将输入XML字符串 ({@code xml}) 反序列化为 {@code cls} 类型的对象 ({@code obj})。</li>
+   *   <li>将 {@code obj} 序列化回XML字符串 ({@code marshaledXml})。</li>
+   *   <li>断言原始输入XML ({@code xml}) 与 {@code marshaledXml} 在语义上相等。</li>
+   *   <li>将 {@code marshaledXml} 反序列化回 {@code cls} 类型的对象 ({@code unmarshaledObj})。</li>
+   *   <li>断言 {@code obj} 与 {@code unmarshaledObj} 相等。</li>
+   * </ol>
+   *
+   * @param <T>
+   *     目标对象的类型。
+   * @param mapper
+   *     用于XML序列化和反序列化的 {@link XmlMapper} 实例。
+   * @param xml
+   *     待测试的XML字符串。
+   * @param cls
+   *     期望反序列化成的对象的类。
+   * @throws Exception
+   *     如果在序列化、反序列化或断言过程中发生错误。
+   */
   public static <T> void testXmlSerialization(final XmlMapper mapper,
       final String xml, final Class<T> cls) throws Exception {
     LOGGER.info("Expected XML is:\n{}", xml);
@@ -126,6 +238,31 @@ public abstract class JacksonXmlTestUtils {
     assertEquals(obj, unmarshaledObj);
   }
 
+  /**
+   * 断言XML字符串中指定XPath路径的节点值与给定Java对象的字段值（考虑特殊序列化规则）相等。
+   * <p>
+   * 此方法处理以下情况：
+   * <ul>
+   *   <li>如果字段值为 {@code null}，则断言XPath路径在XML中不存在。</li>
+   *   <li>如果字段标记了 {@link XmlJavaTypeAdapter}，则使用指定的适配器序列化字段值并比较。</li>
+   *   <li>如果字段标记了 {@link JsonSerialize} (Jackson注解)，则使用指定的序列化器序列化字段值并比较。</li>
+   *   <li>如果类型注册了自定义的Jackson {@link JsonSerializer}，则使用该序列化器序列化字段值并比较。</li>
+   *   <li>否则，调用 {@link #assertXmlNodeEqualsNonNullObject(XmlMapper, String, String, Field, Object)} 进行进一步处理。</li>
+   * </ul>
+   *
+   * @param mapper
+   *     {@link XmlMapper} 实例。
+   * @param xml
+   *     待检查的XML字符串。
+   * @param path
+   *     节点在XML中的XPath路径。
+   * @param field
+   *     正在检查的对象字段，可能为 {@code null}（例如，当检查根对象时）。
+   * @param fieldValue
+   *     期望的字段值。如果为 {@code null}，则断言XPath路径不存在。
+   * @throws Exception
+   *     如果在序列化、XPath评估或断言过程中发生错误。
+   */
   @SuppressWarnings("rawtypes")
   public static void assertXmlNodeEqualsObject(final XmlMapper mapper,
       final String xml, final String path, @Nullable final Field field,

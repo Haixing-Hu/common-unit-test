@@ -65,15 +65,43 @@ public abstract class ModelTestBase<T> {
 
   protected final ReferenceAnnotationTester<T> referenceAnnotationTester;
 
+  /**
+   * 构造一个 {@link ModelTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   */
   protected ModelTestBase(final Class<T> type) {
     this(type, DEFAULT_TEST_LOOPS, new CustomizedJsonMapper(), new CustomizedXmlMapper());
   }
 
+  /**
+   * 构造一个 {@link ModelTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param jsonMapper
+   *     用于JSON序列化/反序列化的 {@link JsonMapper} 对象。
+   * @param xmlMapper
+   *     用于XML序列化/反序列化的 {@link XmlMapper} 对象。
+   */
   protected ModelTestBase(final Class<T> type, final JsonMapper jsonMapper,
       final XmlMapper xmlMapper) {
     this(type, DEFAULT_TEST_LOOPS, jsonMapper, xmlMapper);
   }
 
+  /**
+   * 构造一个 {@link ModelTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param loops
+   *     测试循环次数。
+   * @param jsonMapper
+   *     用于JSON序列化/反序列化的 {@link JsonMapper} 对象。
+   * @param xmlMapper
+   *     用于XML序列化/反序列化的 {@link XmlMapper} 对象。
+   */
   protected ModelTestBase(final Class<T> type, final int loops,
       final JsonMapper jsonMapper, final XmlMapper xmlMapper) {
     this.type = type;
@@ -90,52 +118,114 @@ public abstract class ModelTestBase<T> {
     this.referenceAnnotationTester = new ReferenceAnnotationTester<>(type, random, loops);
   }
 
+  /**
+   * 获取待测试的领域对象模型的类型。
+   *
+   * @return 待测试的领域对象模型的类型。
+   */
   public final Class<T> getType() {
     return type;
   }
 
+  /**
+   * 获取测试循环次数。
+   *
+   * @return 测试循环次数。
+   */
   public final int getLoops() {
     return loops;
   }
 
+  /**
+   * 获取用于JSON序列化/反序列化的 {@link ObjectMapper} 对象。
+   *
+   * @return 用于JSON序列化/反序列化的 {@link ObjectMapper} 对象。
+   */
   public final ObjectMapper getJsonMapper() {
     return jsonMapper;
   }
 
+  /**
+   * 获取用于生成随机Java Bean的 {@link RandomBeanGenerator} 对象。
+   *
+   * @return 用于生成随机Java Bean的 {@link RandomBeanGenerator} 对象。
+   */
   public final RandomBeanGenerator getRandom() {
     return random;
   }
 
+  /**
+   * 测试模型的JSON序列化和反序列化。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testJsonSerializeDeserialize() throws Exception {
     jacksonJsonTester.test();
   }
 
+  /**
+   * 测试模型的XML序列化和反序列化。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testXmlSerializeDeserialize() throws Exception {
     xmlTester.test();
   }
 
+  /**
+   * 测试模型的克隆功能。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testClone() throws Exception {
     cloneTester.test();
   }
 
+  /**
+   * 测试模型的可序列化性。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testSerializable() throws Exception {
     serializableTester.test();
   }
 
+  /**
+   * 测试模型的 Nullable 注解。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testNullableAnnotation() throws Exception {
     nullableAnnotationTester.test();
   }
 
+  /**
+   * 测试模型的 Size 注解。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testSizeAnnotation() throws Exception {
     sizeAnnotationTester.test();
   }
 
+  /**
+   * 测试模型的 Reference 注解。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testReferenceAnnotation() throws Exception {
     referenceAnnotationTester.test();

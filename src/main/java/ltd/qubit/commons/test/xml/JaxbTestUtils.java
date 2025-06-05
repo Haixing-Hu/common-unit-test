@@ -85,15 +85,29 @@ import static ltd.qubit.commons.test.xml.XmlUnitUtils.assertXmlEqual;
 import static ltd.qubit.commons.test.xml.XmlUnitUtils.getXpathElement;
 
 /**
- * The utility class for testing the XML serialization of a object.
+ * 用于测试对象JAXB XML序列化的工具类。
  *
- * @author Haixing Hu
+ * @author 胡海星
  */
 public abstract class JaxbTestUtils {
 
   private static final Logger LOGGER = LoggerFactory
       .getLogger(JaxbTestUtils.class);
 
+  /**
+   * 断言使用JAXB将对象编组（marshal）为XML后的结果与期望的XML字符串在语义上相同。
+   *
+   * @param <T>
+   *     对象的类型。
+   * @param cls
+   *     对象的类，用于创建JAXBContext。
+   * @param object
+   *     待编组的对象。
+   * @param expectedXml
+   *     期望的XML字符串。
+   * @throws Exception
+   *     如果在编组或断言过程中发生错误。
+   */
   public static <T> void assertXmlMarshalEquals(final Class<T> cls,
       final T object, final String expectedXml) throws Exception {
     final JAXBContext context = JAXBContext.newInstance(cls);
@@ -114,6 +128,22 @@ public abstract class JaxbTestUtils {
              .areIdentical();
   }
 
+  /**
+   * 断言使用JAXB将对象列表编组（marshal）为XML后的结果与期望的XML字符串在语义上相同。
+   *
+   * @param <T>
+   *     列表中对象的类型。
+   * @param cls
+   *     列表中对象的类，用于创建JAXBContext。
+   * @param list
+   *     待编组的对象列表。
+   * @param rootName
+   *     生成的XML文档的根元素名称。
+   * @param expectedXml
+   *     期望的XML字符串。
+   * @throws Exception
+   *     如果在编组或断言过程中发生错误。
+   */
   public static <T> void assertXmlMarshalListEquals(final Class<T> cls,
       final List<T> list, final String rootName, final String expectedXml)
       throws Exception {
@@ -135,6 +165,20 @@ public abstract class JaxbTestUtils {
              .areIdentical();
   }
 
+  /**
+   * 断言使用JAXB将XML字符串解组（unmarshal）为对象后的结果与期望的对象相等。
+   *
+   * @param <T>
+   *     对象的类型。
+   * @param cls
+   *     对象的类，用于创建JAXBContext和确定返回类型。
+   * @param xml
+   *     待解组的XML字符串。
+   * @param expectedObject
+   *     期望得到的对象实例。
+   * @throws Exception
+   *     如果在解组或断言过程中发生错误。
+   */
   public static <T> void assertXmlUnmarshalEquals(final Class<T> cls,
       final String xml, final T expectedObject) throws Exception {
     final JAXBContext context = JAXBContext.newInstance(cls);
@@ -148,6 +192,20 @@ public abstract class JaxbTestUtils {
     assertEquals(expectedObject, actualObject);
   }
 
+  /**
+   * 断言使用JAXB将XML字符串解组（unmarshal）为对象列表后的结果与期望的对象列表相等。
+   *
+   * @param <T>
+   *     列表中对象的类型。
+   * @param cls
+   *     列表中对象的类，用于创建JAXBContext和确定返回类型。
+   * @param xml
+   *     待解组的XML字符串，代表一个对象列表。
+   * @param expectedList
+   *     期望得到的对象列表。
+   * @throws Exception
+   *     如果在解组或断言过程中发生错误。
+   */
   public static <T> void assertXmlUnmarshalListEquals(final Class<T> cls,
       final String xml, final List<T> expectedList) throws Exception {
     final StringReader reader = new StringReader(xml);
@@ -232,6 +290,21 @@ public abstract class JaxbTestUtils {
     }
   }
 
+  /**
+   * 测试给定对象的JAXB XML反序列化（解组）过程。
+   * <p>
+   * 该方法首先使用 {@link ltd.qubit.commons.text.xml.jaxb.JaxbUtils#marshal(Object, Class)} 将对象序列化为XML字符串，
+   * 然后使用 {@link ltd.qubit.commons.text.xml.jaxb.JaxbUtils#unmarshal(java.io.Reader, Class)} 将该XML字符串反序列化回原始对象的类型，
+   * 并断言原始对象与反序列化后的对象相等。
+   * 测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或反序列化过程中发生任何错误。
+   */
   public static <T> void testXmlDeserialization(final T obj)
       throws Exception {
     LOGGER.debug("Testing XML deserialization for the object:\n{}", obj);
@@ -501,6 +574,16 @@ public abstract class JaxbTestUtils {
     }
   }
 
+  /**
+   * 根据Java字段对象推断其对应的XML元素名称。
+   * <p>
+   * 优先使用 {@link jakarta.xml.bind.annotation.XmlElement @XmlElement} 或 {@link jakarta.xml.bind.annotation.XmlAttribute @XmlAttribute} 注解的 {@code name} 属性。
+   * 如果这些注解不存在或 {@code name} 为默认值 ({@code "##default"})，则使用字段自身的名称。
+   *
+   * @param field
+   *     Java字段对象。
+   * @return 推断出的XML元素或属性名称。
+   */
   public static String toXmlName(final Field field) {
     final String fieldName = field.getName();
     final String result = toXmlName(fieldName);
@@ -511,6 +594,16 @@ public abstract class JaxbTestUtils {
     }
   }
 
+  /**
+   * 根据Java字段名称直接返回其作为XML元素名称（无特殊处理）。
+   * <p>
+   * 注意：此方法不考虑JAXB注解，仅返回原始字段名。
+   * 如需更准确的XML名称推断（考虑注解），请使用 {@link #toXmlName(Field)}。
+   *
+   * @param fieldName
+   *     Java字段的名称。
+   * @return 字段名称本身，作为XML名称。
+   */
   public static String toXmlName(final String fieldName) {
     final StringBuilder builder = new StringBuilder();
     for (int i = 0; i < fieldName.length(); ++i) {
@@ -527,6 +620,16 @@ public abstract class JaxbTestUtils {
     return builder.toString();
   }
 
+  /**
+   * 获取指定类对应的JAXB XML根元素名称。
+   * <p>
+   * 该方法查找类上的 {@link jakarta.xml.bind.annotation.XmlRootElement @XmlRootElement} 注解，并返回其 {@code name} 属性。
+   * 如果注解不存在或名称为默认值 ({@code "##default"})，则返回 {@code null}。
+   *
+   * @param type
+   *     目标类。
+   * @return JAXB XML根元素名称，如果未定义则返回 {@code null}。
+   */
   public static String getXmlRootElement(final Class<?> type) {
     if (!type.isAnnotationPresent(XmlRootElement.class)) {
       fail("No XmlRootElement annotation presented in the class.");
@@ -535,6 +638,21 @@ public abstract class JaxbTestUtils {
     return rootElement.name();
   }
 
+  /**
+   * 测试给定对象的JAXB XML序列化（编组）过程的正确性。
+   * <p>
+   * 该方法首先使用 {@link ltd.qubit.commons.text.xml.jaxb.JaxbUtils#marshal(Object, Class)} 将对象序列化为XML字符串。
+   * 然后，它会调用此类内部的 {@code assertXmlNodeEqualsField} 方法来递归地比较XML字符串中的每个节点
+   * 是否与原始对象中相应字段的值匹配。
+   * 测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或断言过程中发生任何错误。
+   */
   public static <T> void testXmlSerialization(final T obj)
       throws Exception {
     LOGGER.debug("Testing XML serialization for the object:\n{}", obj);
@@ -556,6 +674,27 @@ public abstract class JaxbTestUtils {
     LOGGER.debug("Test finished successfully.");
   }
 
+  /**
+   * 将给定的XML字符串反序列化为指定类型的对象，然后再次序列化，并验证结果的一致性。
+   * <p>
+   * 此方法执行以下操作：
+   * <ol>
+   *   <li>将输入XML字符串 ({@code xml}) 反序列化为 {@code cls} 类型的对象 ({@code obj})。</li>
+   *   <li>将 {@code obj} 序列化回XML字符串 ({@code marshaledXml})。</li>
+   *   <li>断言原始输入XML ({@code xml}) 与 {@code marshaledXml} 在语义上相等。</li>
+   *   <li>将 {@code marshaledXml} 反序列化回 {@code cls} 类型的对象 ({@code unmarshaledObj})。</li>
+   *   <li>断言初次反序列化的 {@code obj} 与再次反序列化的 {@code unmarshaledObj} 相等。</li>
+   * </ol>
+   *
+   * @param <T>
+   *     目标对象的类型。
+   * @param xml
+   *     待测试的XML字符串。
+   * @param cls
+   *     期望反序列化成的对象的类。
+   * @throws Exception
+   *     如果在序列化、反序列化或断言过程中发生错误。
+   */
   public static <T> void testXmlSerialization(final String xml, final Class<T> cls)
       throws Exception {
     LOGGER.debug("Expected XML is:\n{}", xml);
@@ -569,6 +708,29 @@ public abstract class JaxbTestUtils {
     assertEquals(obj, unmarshaledObj);
   }
 
+  /**
+   * 从给定的URL加载XML，反序列化为指定类型的对象，然后再次序列化，并验证结果的一致性。
+   * <p>
+   * 此方法首先从URL读取XML内容，然后调用 {@link #testXmlSerialization(String, Class)} 执行核心测试逻辑。
+   * 操作包括：
+   * <ol>
+   *   <li>从URL读取XML内容。</li>
+   *   <li>将XML反序列化为 {@code cls} 类型的对象。</li>
+   *   <li>将该对象序列化回XML字符串。</li>
+   *   <li>断言原始从URL加载的XML与再次序列化的XML在语义上相等。</li>
+   *   <li>将再次序列化的XML反序列化回对象。</li>
+   *   <li>断言初次反序列化的对象与再次反序列化的对象相等。</li>
+   * </ol>
+   *
+   * @param <T>
+   *     目标对象的类型。
+   * @param url
+   *     包含XML数据的URL。
+   * @param cls
+   *     期望反序列化成的对象的类。
+   * @throws Exception
+   *     如果在IO操作、序列化、反序列化或断言过程中发生错误。
+   */
   public static <T> void testXmlSerialization(final URL url, final Class<T> cls) throws Exception {
     final String xml = IoUtils.toString(url, StandardCharsets.UTF_8);
     testXmlSerialization(xml, cls);

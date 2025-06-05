@@ -30,6 +30,7 @@ import ltd.qubit.commons.text.jackson.CustomizedXmlMapper;
  *
  * @param <E>
  *     待测试的领域枚举类的类型。
+ * @author 胡海星
  */
 public class EnumTestBase<E extends Enum<E>> {
 
@@ -53,15 +54,43 @@ public class EnumTestBase<E extends Enum<E>> {
 
   protected final LocalizedNameTester<E> localizedNameTester;
 
+  /**
+   * 构造一个 {@link EnumTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域枚举类的类型。
+   */
   protected EnumTestBase(final Class<E> type) {
     this(type, DEFAULT_TEST_LOOPS, new CustomizedJsonMapper(), new CustomizedXmlMapper());
   }
 
+  /**
+   * 构造一个 {@link EnumTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域枚举类的类型。
+   * @param jsonMapper
+   *     用于JSON序列化/反序列化的 {@link JsonMapper} 对象。
+   * @param xmlMapper
+   *     用于XML序列化/反序列化的 {@link XmlMapper} 对象。
+   */
   protected EnumTestBase(final Class<E> type, final JsonMapper jsonMapper,
       final XmlMapper xmlMapper) {
     this(type, DEFAULT_TEST_LOOPS, jsonMapper, xmlMapper);
   }
 
+  /**
+   * 构造一个 {@link EnumTestBase} 对象。
+   *
+   * @param type
+   *     待测试的领域枚举类的类型。
+   * @param loops
+   *     测试循环次数。
+   * @param jsonMapper
+   *     用于JSON序列化/反序列化的 {@link JsonMapper} 对象。
+   * @param xmlMapper
+   *     用于XML序列化/反序列化的 {@link XmlMapper} 对象。
+   */
   protected EnumTestBase(final Class<E> type, final int loops,
       final JsonMapper jsonMapper, final XmlMapper xmlMapper) {
     this.type = type;
@@ -74,32 +103,70 @@ public class EnumTestBase<E extends Enum<E>> {
     this.localizedNameTester = new LocalizedNameTester<>(type, random, loops);
   }
 
+  /**
+   * 获取待测试的领域枚举类的类型。
+   *
+   * @return 待测试的领域枚举类的类型。
+   */
   public final Class<E> getType() {
     return type;
   }
 
+  /**
+   * 获取测试循环次数。
+   *
+   * @return 测试循环次数。
+   */
   public final int getLoops() {
     return loops;
   }
 
+  /**
+   * 获取用于JSON序列化/反序列化的 {@link ObjectMapper} 对象。
+   *
+   * @return 用于JSON序列化/反序列化的 {@link ObjectMapper} 对象。
+   */
   public final ObjectMapper getJsonMapper() {
     return jsonMapper;
   }
 
+  /**
+   * 获取用于生成随机Java Bean的 {@link RandomBeanGenerator} 对象。
+   *
+   * @return 用于生成随机Java Bean的 {@link RandomBeanGenerator} 对象。
+   */
   public final RandomBeanGenerator getRandom() {
     return random;
   }
 
+  /**
+   * 测试枚举的JSON序列化和反序列化。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testJsonSerializeDeserialize() throws Exception {
     jacksonJsonTester.test();
   }
 
+  /**
+   * 测试枚举的XML序列化和反序列化。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testXmlSerializeDeserialize() throws Exception {
     xmlTester.test();
   }
 
+  /**
+   * 测试枚举的本地化名称。
+   *
+   * @throws Exception
+   *     如果发生任何错误。
+   */
   @Test
   public void testLocalizedName() throws Exception {
     localizedNameTester.test();

@@ -34,22 +34,81 @@ import static ltd.qubit.commons.reflect.MethodUtils.isAnnotationDirectlyPresentI
  */
 public class NullableAnnotationTester<T> extends ModelTester<T> {
 
+  /**
+   * 构造一个 {@link NullableAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   */
   public NullableAnnotationTester(final Class<T> type) {
     super(type);
   }
 
+  /**
+   * 构造一个 {@link NullableAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param loops
+   *     测试循环次数。
+   */
   public NullableAnnotationTester(final Class<T> type, final int loops) {
     super(type, loops);
   }
 
+  /**
+   * 构造一个 {@link NullableAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param random
+   *     用于生成随机数据的 {@link RandomBeanGenerator} 对象。
+   */
   public NullableAnnotationTester(final Class<T> type, final RandomBeanGenerator random) {
     super(type, random);
   }
 
+  /**
+   * 构造一个 {@link NullableAnnotationTester} 对象。
+   *
+   * @param type
+   *     待测试的领域对象模型的类型。
+   * @param random
+   *     用于生成随机数据的 {@link RandomBeanGenerator} 对象。
+   * @param loops
+   *     测试循环次数。
+   */
   public NullableAnnotationTester(final Class<T> type, final RandomBeanGenerator random, final int loops) {
     super(type, random, loops);
   }
 
+  /**
+   * 执行对模型中属性及其对应的getter/setter方法上 {@code @Nullable} 注解一致性的测试逻辑。
+   * <p>
+   * 此方法会遍历待测试类型的所有属性：
+   * <ul>
+   *   <li>忽略枚举类型、计算属性、JDK内置属性以及transient字段。</li>
+   *   <li>检查属性的 {@code @Nullable} 状态 ({@code prop.isNullable()})。</li>
+   *   <li>验证getter方法存在。</li>
+   *   <li>如果属性非只读，验证setter方法存在且只有一个参数。</li>
+   *   <li>如果属性被标记为 {@code @Nullable}: 
+   *     <ul>
+   *       <li>断言该属性不能是基本类型。</li>
+   *       <li>断言其getter方法必须直接标记 {@code @Nullable} 注解。</li>
+   *       <li>如果存在setter方法，断言其参数必须直接标记 {@code @Nullable} 注解。</li>
+   *     </ul>
+   *   </li>
+   *   <li>如果属性未被标记为 {@code @Nullable} (即非空):
+   *     <ul>
+   *       <li>断言其getter方法不能标记 {@code @Nullable} 注解。</li>
+   *       <li>如果存在setter方法，断言其参数不能标记 {@code @Nullable} 注解。</li>
+   *     </ul>
+   *   </li>
+   * </ul>
+   *
+   * @throws Exception
+   *     如果在测试过程中发生任何错误，例如反射获取方法失败或断言失败。
+   */
   @Override
   protected void doTest() throws Exception {
     if (Enum.class.isAssignableFrom(type)) {

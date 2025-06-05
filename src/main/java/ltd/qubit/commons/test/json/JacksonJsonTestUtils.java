@@ -43,10 +43,31 @@ import static ltd.qubit.commons.test.json.JsonUnitUtils.assertJsonNodeEqualsRaw;
 import static ltd.qubit.commons.text.jackson.JacksonUtils.getPropertyName;
 import static ltd.qubit.commons.text.jackson.JacksonUtils.serializeWithSerializer;
 
+/**
+ * 提供用于测试 Jackson JSON 序列化和反序列化的静态工具方法。
+ *
+ * @author 胡海星
+ */
 public class JacksonJsonTestUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(JacksonJsonTestUtils.class);
 
+  /**
+   * 测试给定对象的JSON反序列化过程。
+   * <p>
+   * 该方法首先使用提供的 {@link JsonMapper} 将对象序列化为JSON字符串（带美化格式），
+   * 然后将该JSON字符串反序列化回原始对象的类型，并断言原始对象与反序列化后的对象相等。
+   * 测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param mapper
+   *     用于JSON序列化和反序列化的 {@link JsonMapper} 实例。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或反序列化过程中发生任何错误。
+   */
   public static <T> void testJsonDeserialization(final JsonMapper mapper, final T obj)
       throws Exception {
     LOGGER.info("Testing JSON deserialization for the object:\n{}", obj);
@@ -59,6 +80,22 @@ public class JacksonJsonTestUtils {
     LOGGER.info("Test finished successfully.");
   }
 
+  /**
+   * 测试给定对象的JSON序列化过程。
+   * <p>
+   * 该方法首先使用提供的 {@link JsonMapper} 将对象序列化为JSON字符串（带美化格式）。
+   * 然后，它会调用 {@code assertJsonNodeEqualsObject} 方法来递归地比较JSON字符串中的每个节点
+   * 是否与原始对象中相应字段的值匹配。测试过程中的关键步骤和结果会通过SLF4J日志记录下来。
+   *
+   * @param <T>
+   *     待测试对象的类型。
+   * @param mapper
+   *     用于JSON序列化的 {@link JsonMapper} 实例。
+   * @param obj
+   *     待测试的对象实例。
+   * @throws Exception
+   *     如果在序列化或断言过程中发生任何错误。
+   */
   public static <T> void testJsonSerialization(final JsonMapper mapper, final T obj)
       throws Exception {
     LOGGER.info("Testing JSON serialization for the object:\n{}", obj);
