@@ -217,23 +217,22 @@ public abstract class JaxbTestUtils {
   }
 
   /**
-   * Stores a list of objects to an XML document.
+   * 将对象列表存储到XML文档中。
    *
-   * <p><b>NOTE: </b> this function will <b>not</b> close the writer. The caller
-   * must close it by himself.
+   * <p><b>注意：</b>此函数<b>不会</b>关闭写入器。调用者必须自行关闭它。
    *
    * @param <T>
-   *     the type of the objects to be stored.
+   *     要存储的对象的类型。
    * @param list
-   *     the list of objects to be stored.
+   *     要存储的对象列表。
    * @param cls
-   *     the class of the objects to be stored.
+   *     要存储的对象的类。
    * @param rootName
-   *     the name of the root element of the stored XML document.
+   *     存储的XML文档的根元素的名称。
    * @param writer
-   *     an writer where to write the marshaled XML.
+   *     用于写入编组后的XML的写入器。
    * @throws JAXBException
-   *     if any error occurs.
+   *     如果发生任何错误。
    */
   private static <T> void marshalList(final List<T> list, final Class<T> cls,
       final String rootName,
@@ -250,17 +249,17 @@ public abstract class JaxbTestUtils {
   }
 
   /**
-   * Unmarshals a list of objects from an XML file.
+   * 从XML文件解组对象列表。
    *
    * @param <T>
-   *     the type of the objects to be loaded.
+   *     要加载的对象的类型。
    * @param reader
-   *     the reader where to read the XML snippets.
+   *     用于读取XML片段的读取器。
    * @param cls
-   *     the class of the objects to be loaded.
-   * @return the list of objects deserialized from the XML file.
+   *     要加载的对象的类。
+   * @return 从XML文件反序列化得到的对象列表。
    * @throws JAXBException
-   *     if any error occurs.
+   *     如果发生任何错误。
    */
   private static <T> List<T> unmarshalList(final Reader reader,
       final Class<T> cls) throws JAXBException {
